@@ -1,0 +1,18 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# web
+/web/node_modules
+/web/coverage
+/web/build
+npm-debug.log*
+
+# backend
+/hh-survivor-backend/target
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
