@@ -9,6 +9,13 @@ npm-debug.log*
 # backend
 /hh-survivor-backend/target
 
+/backend/.gradle/
+/backend/.idea/workspace.xml
+/backend/.idea/tasks.xml
+/backend/.idea/gradle.xml
+/backend/**/*.iml
+/backend/build/
+
 # misc
 .DS_Store
 .env.local
