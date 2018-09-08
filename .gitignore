@@ -15,6 +15,7 @@ npm-debug.log*
 /backend/.idea/gradle.xml
 /backend/**/*.iml
 /backend/build/
+/backend/data/
 
 # misc
 .DS_Store
