@@ -9,7 +9,6 @@
   "rules": {
     "max-classes-per-file": false,
     "ordered-imports": false,
-    "import-sources-order": "any",
     "object-literal-sort-keys": false,
     "no-console": false,
     "semicolon": [true, "always"],

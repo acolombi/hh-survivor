@@ -16,14 +16,14 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-@Path("/")
+@Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 class DataResource {
 
     @Timed
     @GET
-    @Path("schedule")
-    fun getSchedule(): List<Week> {
+    @Path("/weeks")
+    fun getWeeks(): List<Week> {
         val retval = ArrayList<Week>();
         for (i in 1..17) {
             val doc = readXml("data/week_$i.xml")
