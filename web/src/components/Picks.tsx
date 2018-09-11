@@ -68,9 +68,16 @@ interface IProps {
 
     private renderGameDivider(game: IGame) {
         if (game.finished) {
+            const scoreLine = (
+                <div>
+                    <span className={game.visitorScore >= game.homeScore ? "winner" : ""}>{game.visitorScore} </span>
+                    -
+                    <span className={game.visitorScore <= game.homeScore ? "winner" : ""}> {game.homeScore}</span>
+                </div>
+            );
             return (
                 <div className="picker-divider">
-                    <div>{game.visitorScore} - {game.homeScore}</div>
+                    {scoreLine}
                     <div className="final-text">Final</div>
                 </div>
             );

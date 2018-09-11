@@ -79,6 +79,10 @@ a {
   width: 170px;
 }
 
+.games-pickers .game-picker .picker-divider .winner {
+  font-weight: 600;
+}
+
 .games-pickers .game-picker .picker-divider .final-text {
   font-size: 12px;
   color: #738694;
