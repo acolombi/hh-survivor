@@ -1,5 +1,6 @@
 package org.hhsurvivor
 
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.spinscale.dropwizard.jobs.JobsBundle
 import io.dropwizard.Application
 import io.dropwizard.setup.Bootstrap
@@ -17,10 +18,11 @@ class HHSurvivorApplication(): Application<HHSurvivorConfiguration>() {
     override fun initialize(bootstrap: Bootstrap<HHSurvivorConfiguration>) {
         val downloadGamesJob = DownloadGamesJob()
         bootstrap.addBundle(JobsBundle(downloadGamesJob))
+        bootstrap.objectMapper.registerModule(KotlinModule())
     }
 
     override fun run(configuration: HHSurvivorConfiguration, environment: Environment) {
-        environment.jersey().register(DataResource())
+        environment.jersey().register(DataResource(environment.objectMapper))
     }
 
 }

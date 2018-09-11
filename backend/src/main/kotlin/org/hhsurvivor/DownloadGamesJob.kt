@@ -22,6 +22,7 @@ class DownloadGamesJob() : Job() {
                 val outFile = File("data/week_$i.xml")
                 FileUtils.copyURLToFile(url, outFile, 2000, 2000)
             }
+            Data.updateRecords();
         } catch (e: Exception) {
             log.error("Failed to download schedule", e);
         }

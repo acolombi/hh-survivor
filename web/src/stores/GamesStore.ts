@@ -8,18 +8,29 @@ export interface IWeek {
 }
 
 export interface IGame {
+    id: string;
     home: string;
     homeScore: number;
     visitor: string;
     visitorScore: number;
     datetime: string;
+    finished: boolean;
 }
 
 export class GamesStore {
     @observable public weeks: IWeek[];
+    @observable public loading = true;
+
+    constructor() {
+        this.fetchGames = this.fetchGames.bind(this);
+        this.fetchGames();
+        setInterval(this.fetchGames, 60*60*1000);
+    }
 
     public fetchGames = flow(function* fetchGames(this: GamesStore) {
-        const result = yield axios.get("api/weeks");
+        this.loading = true;
+        const result = yield axios.get("/api/weeks");
         this.weeks = result.data;
+        this.loading = false;
     });
 }

@@ -1,28 +1,121 @@
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
+
 .App {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.title-bar {
+  display: flex;
+}
+
+.title-bar h1 {
+  margin: 0 auto;
+}
+
+.nav-bar {
+  display: flex;
+  background-color: #EBF1F5;
+  height: 40px;
+}
+
+.nav-bar div {
+  margin-left: 15px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.picks-week-badges {
+  display: flex;
+  max-width: 100%;
+  overflow-x: scroll;
+}
+
+.badge {
+  background-color: #EBF1F5;
+  width: 55px;
+  height: 60px;
+  margin-right: 2px;
+  font-size: 14px;
   text-align: center;
+  border-color: white;
+  border-style: solid;
+  border-width: 0 1px 2px 1px;
+  flex-grow: 1;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.badge:hover {
+  cursor: pointer;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.badge.current-week {
+  border-bottom-color: #48AFF0;
 }
 
-.App-title {
-  font-size: 1.5em;
+.badge .week-label {
+  padding: 3px;
 }
 
-.App-intro {
-  font-size: large;
+.picks-label.no-picks {
+  color: #A82A2A;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.games-pickers .game-picker {
+  display: flex;
+  margin: 10px 0;
+}
+
+.games-pickers .game-picker .picker-divider {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  width: 170px;
+}
+
+.games-pickers .game-picker .picker-divider .final-text {
+  font-size: 12px;
+  color: #738694;
+}
+
+
+.games-pickers .game-picker .card {
+  display: flex;
+  width: 350px;
+}
+
+.games-pickers .game-picker .card .card-text {
+  margin: 0 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.games-pickers .game-picker .card .card-text div:first-child{
+  margin-top: auto;
+}
+
+.games-pickers .game-picker .card .card-text div:last-child{
+  margin-bottom: auto;
+}
+
+.games-pickers .game-picker .visitor-card {
+  text-align: right;
+}
+
+.games-pickers .game-picker .card:first-child {
+  margin-left: auto;
+}
+
+.games-pickers .game-picker .card:last-child {
+  margin-right: auto;
+}
+
+.games-pickers .game-picker .card .card-text.push-right {
+  margin-left: auto;
 }
