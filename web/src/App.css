@@ -94,6 +94,10 @@ a {
   width: 350px;
 }
 
+.games-pickers .game-picker .card.picked {
+  background-color: rgb(229, 241, 255);
+}
+
 .games-pickers .game-picker .card .card-text {
   margin: 0 8px;
   display: flex;
@@ -110,6 +114,7 @@ a {
 
 .games-pickers .game-picker .visitor-card {
   text-align: right;
+  flex-direction: row-reverse;
 }
 
 .games-pickers .game-picker .card:first-child {
@@ -122,4 +127,38 @@ a {
 
 .games-pickers .game-picker .card .card-text.push-right {
   margin-left: auto;
+}
+
+.games-pickers .game-picker .card .card-text:not(.push-right) {
+  margin-right: auto;
+}
+
+.games-pickers .game-picker .card .pick-container {
+  width: 50px;
+}
+
+.games-pickers .game-picker .card .pick-container .pick-circle {
+  display: flex;
+  margin: 0 auto;
+  border-radius: 50%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #48AFF0;
+  width: 32px;
+  height: 32px;
+}
+
+.games-pickers .game-picker .card .pick-container .pick-circle.picked {
+  color: white;
+  background-color: #48AFF0;
+}
+
+.games-pickers .game-picker .card .pick-container .pick-circle span.bp3-icon {
+  display: block;
+  margin: auto;
+}
+
+.games-pickers .game-picker .card .pick-container .pick-text {
+  color: #48AFF0;
+  text-align: center;
 }

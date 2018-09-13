@@ -29,4 +29,18 @@ export class PlayerStore {
     public setWeek(week: number) {
         this.selectedWeek = week;
     }
+
+    @action.bound
+    public pickGame(week: number, gameId: string, pick: string) {
+        const foundIdx = this.picks.findIndex(p => p.gameId === gameId);
+        if (foundIdx > -1) {
+            if (this.picks[foundIdx].pick === pick) {
+                this.picks.splice(foundIdx, 1);
+            } else {
+                this.picks[foundIdx].pick = pick;
+            }
+        } else {
+            this.picks.push({gameId, week, pick});
+        }
+    }
 }

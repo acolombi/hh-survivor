@@ -33,7 +33,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
         val retval = ArrayList<Week>();
         for (i in 1..17) {
             val doc = readXml("data/week_$i.xml")
-            val games = extractGames(doc)
+            val games = extractGames(doc, i)
             retval.add(Week(i, games))
         }
         return retval
@@ -70,7 +70,7 @@ fun readXml(path: String): Document {
     return dBuilder.parse(xmlInput)
 }
 
-private fun extractGames(doc: Document): List<Game> {
+private fun extractGames(doc: Document, week: Int): List<Game> {
     val xpFactory = XPathFactory.newInstance()
     val xPathEng = xpFactory.newXPath()
     val xPath = "//g"
@@ -78,7 +78,7 @@ private fun extractGames(doc: Document): List<Game> {
 
     val retval = ArrayList<Game>()
     for (i in 0 until res.length) {
-        val id = res.item(i).attributes.getNamedItem("gsis").textContent
+        val id = res.item(i).attributes.getNamedItem("eid").textContent
         val home = res.item(i).attributes.getNamedItem("h").textContent
         val homeScore = stringToInt(res.item(i).attributes.getNamedItem("hs").textContent)
         val visitor = res.item(i).attributes.getNamedItem("v").textContent
@@ -86,7 +86,7 @@ private fun extractGames(doc: Document): List<Game> {
         val time = res.item(i).attributes.getNamedItem("d").textContent + " " +
                 estToPst(res.item(i).attributes.getNamedItem("t").textContent)
         val finished = res.item(i).attributes.getNamedItem("q").textContent.startsWith("F")
-        retval.add(Game(id, home, homeScore, visitor, visitorScore, time, finished))
+        retval.add(Game(id, week, home, homeScore, visitor, visitorScore, time, finished))
     }
 
     return retval;

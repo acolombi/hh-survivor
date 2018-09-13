@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RootStore } from '../stores/RootStore';
 import { observer } from 'mobx-react';
 import { IWeek, IGame } from '../stores/GamesStore';
-import { Card } from '@blueprintjs/core';
+import { Card, Icon } from '@blueprintjs/core';
 import { locations, names, img70s } from '../Utils';
 
 
@@ -57,11 +57,14 @@ interface IProps {
     }
 
     private renderGame(game: IGame) {
+        const relevantPick = this.props.rootStore.playerStore.picks.find(p => p.gameId === game.id) || {gameId: game.id, pick: ""};
+        const visitorPickHandler = () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.visitor);
+        const homePickHandler = () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.home);
         return (
             <div key={game.id} className="game-picker">
-                {this.renderTeamCard(game.visitor, true)}
+                {this.renderTeamCard(game.visitor, true, relevantPick.pick === game.visitor, visitorPickHandler)}
                 {this.renderGameDivider(game)}
-                {this.renderTeamCard(game.home, false)}
+                {this.renderTeamCard(game.home, false, relevantPick.pick === game.home, homePickHandler)}
             </div>
         );
     }
@@ -91,7 +94,7 @@ interface IProps {
         }
     }
 
-    private renderTeamCard(team: string, visitor: boolean) {
+    private renderTeamCard(team: string, visitor: boolean, playerPick: boolean, clickHandler: () => void) {
         const classes = "card" + (visitor ? " visitor-card" : "");
         const img = <div><img src={img70s[team]} width="48" height="48" /></div>;
         const textClasses = "card-text" + (visitor ? " push-right" : "");
@@ -99,14 +102,21 @@ interface IProps {
         const recordText = record && !this.props.rootStore.recordsStore.loading
             ? `${record.wins}-${record.losses}` + (record.ties ? `-${record.ties}` : "")
             : "loading";
+        const pickedClass = playerPick ? "picked" : "";
+        const pickText = playerPick ? "Picked" : "Pick";
         return (
-            <Card interactive={true} className={classes}>
-                {!visitor && img}
+            <Card interactive={true} className={`${classes} ${pickedClass}`} onClick={clickHandler}>
+                {img}
                 <div className={textClasses}>
                     <div>{locations[team]}</div>
                     <div>{names[team]} | {recordText}</div>
                 </div>
-                {visitor && img}
+                <div className="pick-container">
+                    <div className={`pick-circle ${pickedClass}`}>
+                        {playerPick && <Icon icon="tick" />}
+                    </div>
+                    <div className={`pick-text ${pickedClass}`}>{pickText}</div>
+                </div>
             </Card>
         );
 

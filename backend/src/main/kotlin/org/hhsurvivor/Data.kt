@@ -23,6 +23,9 @@ object Data {
     }
 
     fun updateRecords() {
+        for (team in teams) {
+            records[team] = Record(0, 0, 0)
+        }
 
         for (i in 1..17) {
             val doc = readXml("data/week_$i.xml")

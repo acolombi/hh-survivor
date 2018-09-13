@@ -1,6 +1,7 @@
 package org.hhsurvivor
 
 data class Game(val id: String,
+                val week: Int,
                 val home: String,
                 val homeScore: Int?,
                 val visitor: String,

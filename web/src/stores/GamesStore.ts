@@ -9,6 +9,7 @@ export interface IWeek {
 
 export interface IGame {
     id: string;
+    week: number;
     home: string;
     homeScore: number;
     visitor: string;
