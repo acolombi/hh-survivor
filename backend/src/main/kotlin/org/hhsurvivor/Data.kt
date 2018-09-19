@@ -3,6 +3,9 @@ package org.hhsurvivor
 import org.slf4j.LoggerFactory
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
@@ -14,6 +17,7 @@ object Data {
             "TEN", "WAS")
 
     val records = HashMap<String, Record>()
+    val games = LinkedHashMap<String, Game>()
     val log = LoggerFactory.getLogger(Data::class.java)
 
     init {
@@ -22,13 +26,10 @@ object Data {
         }
     }
 
-    fun updateRecords() {
-        for (team in teams) {
-            records[team] = Record(0, 0, 0)
-        }
-
-        for (i in 1..17) {
-            val doc = readXml("data/week_$i.xml")
+    fun updateGames() {
+        games.clear()
+        for (weekNumber in 1..17) {
+            val doc = readXml("data/week_$weekNumber.xml")
 
             val xpFactory = XPathFactory.newInstance()
             val xPathEng = xpFactory.newXPath()
@@ -36,28 +37,51 @@ object Data {
             val res = xPathEng.evaluate(xPath, doc, XPathConstants.NODESET) as NodeList
 
             for (i in 0 until res.length) {
-                if (res.item(i).attributes.getNamedItem("q").textContent.startsWith("F")) {
-                    try {
-                        val home = res.item(i).attributes.getNamedItem("h").textContent
-                        val homeScore = res.item(i).attributes.getNamedItem("hs").textContent.toInt()
-                        val visitor = res.item(i).attributes.getNamedItem("v").textContent
-                        val visitorScore = res.item(i).attributes.getNamedItem("vs").textContent.toInt()
-                        if (visitorScore < homeScore) {
-                            this.records[home]!!.wins += 1
-                            this.records[visitor]!!.losses += 1
-                        } else if (visitorScore > homeScore) {
-                            this.records[visitor]!!.wins += 1
-                            this.records[home]!!.losses += 1
-                        } else {
-                            this.records[visitor]!!.ties += 1
-                            this.records[home]!!.ties += 1
-                        }
-                    } catch (e: Exception) {
-                        val gameId = res.item(i).attributes.getNamedItem("gsis").textContent
-                        log.warn("Weird XML entry, couldn't evaluated completed game $gameId for its record.", e)
-                    }
-                }
+
+                val eid = res.item(i).attributes.getNamedItem("eid").textContent
+                val home = res.item(i).attributes.getNamedItem("h").textContent
+                val homeScore = stringToInt(res.item(i).attributes.getNamedItem("hs").textContent)
+                val visitor = res.item(i).attributes.getNamedItem("v").textContent
+                val visitorScore = stringToInt(res.item(i).attributes.getNamedItem("vs").textContent)
+                val time = res.item(i).attributes.getNamedItem("d").textContent + " " +
+                        estToPst(res.item(i).attributes.getNamedItem("t").textContent)
+                val finished = res.item(i).attributes.getNamedItem("q").textContent.startsWith("F")
+                games[eid] = Game(eid, weekNumber, home, homeScore, visitor, visitorScore, time, finished)
             }
         }
     }
+
+    fun updateRecords() {
+        for (team in teams) {
+            records[team] = Record(0, 0, 0)
+        }
+        for (game in games.values) {
+            val visitorScore = game.visitorScore
+            val homeScore = game.homeScore
+            if (!game.finished || homeScore == null || visitorScore == null) {
+                continue
+            }
+
+            if (visitorScore < homeScore) {
+                this.records[game.home]!!.wins += 1
+                this.records[game.visitor]!!.losses += 1
+            } else if (visitorScore > homeScore) {
+                this.records[game.visitor]!!.wins += 1
+                this.records[game.home]!!.losses += 1
+            } else {
+                this.records[game.visitor]!!.ties += 1
+                this.records[game.home]!!.ties += 1
+            }
+        }
+    }
+}
+
+private fun estToPst(estTime: String): String {
+    val parseFormat = DateTimeFormatter.ofPattern("h:mm a")
+    val printFormat = DateTimeFormatter.ofPattern("h:mm")
+    return LocalTime.parse("$estTime AM", parseFormat).minusHours(3).format(printFormat);
+}
+
+private fun stringToInt(str: String?): Int? {
+    return if (str != "") str?.toInt() else null;
 }

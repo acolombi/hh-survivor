@@ -98,6 +98,15 @@ a {
   background-color: rgb(229, 241, 255);
 }
 
+.games-pickers .game-picker .card.picked.winner {
+  background-color: rgb(169, 247, 205);
+}
+
+.games-pickers .game-picker .card.picked.loser {
+  background-color: rgb(247, 169, 169);
+}
+
+
 .games-pickers .game-picker .card .card-text {
   margin: 0 8px;
   display: flex;
@@ -153,6 +162,24 @@ a {
   background-color: #48AFF0;
 }
 
+.games-pickers .game-picker .card.picked.loser .pick-container .pick-circle {
+  border-color: rgb(180, 53, 53);
+}
+
+.games-pickers .game-picker .card.picked.loser .pick-container .pick-circle.picked {
+  color: white;
+  background-color: rgb(180, 53, 53);
+}
+
+.games-pickers .game-picker .card.picked.winner .pick-container .pick-circle {
+  border-color: rgb(33, 117, 16);
+}
+
+.games-pickers .game-picker .card.picked.winner .pick-container .pick-circle.picked {
+  color: white;
+  background-color: rgb(33, 117, 16);
+}
+
 .games-pickers .game-picker .card .pick-container .pick-circle span.bp3-icon {
   display: block;
   margin: auto;
@@ -161,4 +188,12 @@ a {
 .games-pickers .game-picker .card .pick-container .pick-text {
   color: #48AFF0;
   text-align: center;
+}
+
+.games-pickers .game-picker .card.picked.loser .pick-container .pick-text {
+  color: rgb(180, 53, 53);
+}
+
+.games-pickers .game-picker .card.picked.winner .pick-container .pick-text {
+  color: rgb(33, 117, 16);
 }

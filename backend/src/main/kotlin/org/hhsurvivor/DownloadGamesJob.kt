@@ -1,6 +1,5 @@
 package org.hhsurvivor
 
-import com.codahale.metrics.MetricRegistry
 import de.spinscale.dropwizard.jobs.Job
 import de.spinscale.dropwizard.jobs.annotations.Every
 import org.apache.commons.io.FileUtils
@@ -22,6 +21,7 @@ class DownloadGamesJob() : Job() {
                 val outFile = File("data/week_$i.xml")
                 FileUtils.copyURLToFile(url, outFile, 2000, 2000)
             }
+            Data.updateGames();
             Data.updateRecords();
         } catch (e: Exception) {
             log.error("Failed to download schedule", e);

@@ -62,9 +62,9 @@ interface IProps {
         const homePickHandler = () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.home);
         return (
             <div key={game.id} className="game-picker">
-                {this.renderTeamCard(game.visitor, true, relevantPick.pick === game.visitor, visitorPickHandler)}
+                {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, true, relevantPick.pick === game.visitor, visitorPickHandler)}
                 {this.renderGameDivider(game)}
-                {this.renderTeamCard(game.home, false, relevantPick.pick === game.home, homePickHandler)}
+                {this.renderTeamCard(game.home, game.week, game.visitorScore < game.homeScore, false, relevantPick.pick === game.home, homePickHandler)}
             </div>
         );
     }
@@ -73,9 +73,9 @@ interface IProps {
         if (game.finished) {
             const scoreLine = (
                 <div>
-                    <span className={game.visitorScore >= game.homeScore ? "winner" : ""}>{game.visitorScore} </span>
+                    <span className={game.visitorScore > game.homeScore ? "winner" : ""}>{game.visitorScore} </span>
                     -
-                    <span className={game.visitorScore <= game.homeScore ? "winner" : ""}> {game.homeScore}</span>
+                    <span className={game.visitorScore < game.homeScore ? "winner" : ""}> {game.homeScore}</span>
                 </div>
             );
             return (
@@ -94,7 +94,7 @@ interface IProps {
         }
     }
 
-    private renderTeamCard(team: string, visitor: boolean, playerPick: boolean, clickHandler: () => void) {
+    private renderTeamCard(team: string, week: number, winner: boolean, visitor: boolean, playerPick: boolean, clickHandler: () => void) {
         const classes = "card" + (visitor ? " visitor-card" : "");
         const img = <div><img src={img70s[team]} width="48" height="48" /></div>;
         const textClasses = "card-text" + (visitor ? " push-right" : "");
@@ -103,9 +103,18 @@ interface IProps {
             ? `${record.wins}-${record.losses}` + (record.ties ? `-${record.ties}` : "")
             : "loading";
         const pickedClass = playerPick ? "picked" : "";
-        const pickText = playerPick ? "Picked" : "Pick";
+        const lockedIn = week < this.props.rootStore.currentWeekStore.currentWeek;
+        const winLoseClass = lockedIn
+            ? (winner ? "winner" : "loser")
+            : "";
+
+        const pickText = playerPick
+            ? (winLoseClass ? (winner ? "Winner" : "Loser") : "Picked")
+            : "Pick";
+        const interactive = !lockedIn;
+        const maybeClickHandler = !lockedIn ? clickHandler : undefined;
         return (
-            <Card interactive={true} className={`${classes} ${pickedClass}`} onClick={clickHandler}>
+            <Card interactive={interactive} className={`${classes} ${pickedClass} ${winLoseClass}`} onClick={maybeClickHandler}>
                 {img}
                 <div className={textClasses}>
                     <div>{locations[team]}</div>
@@ -113,7 +122,7 @@ interface IProps {
                 </div>
                 <div className="pick-container">
                     <div className={`pick-circle ${pickedClass}`}>
-                        {playerPick && <Icon icon="tick" />}
+                        {playerPick && <Icon icon={lockedIn && !winner ? "cross" : "tick"}/>}
                     </div>
                     <div className={`pick-text ${pickedClass}`}>{pickText}</div>
                 </div>
@@ -126,15 +135,33 @@ interface IProps {
         const weekPicks = this.props.rootStore.playerStore.picks.filter(p => p.week === week.number).length;
         const badgeClasses = "badge"
             + (this.props.rootStore.playerStore.selectedWeek === week.number ? " current-week" : "");
-        const picksLabel = weekPicks > 0
-            ? <div className="picks-label">{weekPicks} picks</div>
-            : <div className="picks-label no-picks">no picks</div>;
+        const label = week.number >= this.props.rootStore.currentWeekStore.currentWeek
+            ? (weekPicks > 0 ? <div className="picks-label">{weekPicks} picks</div> : <div className="picks-label no-picks">no picks</div>)
+            : <div className="picks-label">{this.computeWeeksPoints(week.number)} points</div>;
         return (
             <div key={week.number} className={badgeClasses} onClick={() => this.handleSelectWeek(week.number)}>
                 <div className="week-label">{week.number}</div>
-                {picksLabel}
+                {label}
             </div>
         );
+    }
+
+    private computeWeeksPoints(weekNumber: number) {
+        const games = this.props.rootStore.gamesStore.weeks[weekNumber - 1].games;
+        const playerPicks = this.props.rootStore.playerStore.picks.filter(p => p.week === weekNumber);
+
+        for (const pick of playerPicks) {
+            const game = games.find(g => g.id === pick.gameId);
+            if (game) {
+                const badPick = (game.visitorScore <= game.homeScore && pick.pick === game.visitor)
+                    || (game.homeScore <= game.visitorScore && pick.pick === game.home);
+                if (badPick) {
+                    return 0;
+                }
+            }
+        }
+
+        return playerPicks.length;
     }
 
     private handleSelectWeek(weekNumber: number) {

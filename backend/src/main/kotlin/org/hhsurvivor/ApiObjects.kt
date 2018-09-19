@@ -21,3 +21,9 @@ data class Player(val id: String,
                   val picks: List<Pick>)
 
 data class TeamRecord(val team: String, val wins: Int, val losses: Int, val ties: Int)
+
+data class PlayerPick(val pickNumber: Int,
+                      val playerId: String,
+                      val week: Int,
+                      val gameId: String,
+                      val pick: String)
