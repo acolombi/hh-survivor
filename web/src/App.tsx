@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import { Picks } from './components/Picks';
 import * as Cookies from 'js-cookie';
+import { Scoreboard } from './components/Scoreboard';
 
 const rootStore = new RootStore();
 
@@ -46,7 +47,7 @@ function renderPicks({match}: {match: any}) {
 }
 
 function renderScores({match}: {match: any}) {
-    return <div>Scores</div>;
+    return <Scoreboard rootStore={rootStore} />;
 }
 
 export default App;

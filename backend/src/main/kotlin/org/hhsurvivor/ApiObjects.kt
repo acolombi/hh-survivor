@@ -27,3 +27,6 @@ data class PlayerPick(val pickNumber: Int,
                       val week: Int,
                       val gameId: String,
                       val pick: String)
+
+data class PlayerScore(val playerName: String,
+                       val score: Int)

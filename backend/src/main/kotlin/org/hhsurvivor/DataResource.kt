@@ -123,6 +123,43 @@ class DataResource(private val objectMapper: ObjectMapper) {
 
         pickNumberMap[PickNumberKey(body.playerId, body.gameId)] = body.pickNumber
     }
+
+    @Timed
+    @Path("/scoreboard")
+    @GET
+    fun getScoreboard(): List<PlayerScore> {
+        val retval = ArrayList<PlayerScore>();
+        for (file in File("data/players/").walk()) {
+            if (!file.isFile || file.extension != "json") {
+                continue;
+            }
+            val player = objectMapper.readValue(file, Player::class.java)
+            val weekWins = IntArray(17)
+            val weekLosses = IntArray(17)
+            for (pick in player.picks) {
+                val game = Data.games[pick.gameId]
+                if (game == null || !game.finished || game.homeScore == null || game.visitorScore == null) {
+                    continue
+                }
+                if (game.homeScore > game.visitorScore && pick.pick == game.home
+                    || game.homeScore < game.visitorScore && pick.pick == game.visitor) {
+                    weekWins[pick.week-1] += 1;
+                } else {
+                    weekLosses[pick.week-1] += 1;
+                }
+            }
+
+            var score = 0;
+            for (i in 0 until weekWins.size) {
+                if (weekLosses[i] == 0) {
+                    score += weekWins[i]
+                }
+            }
+
+            retval.add(PlayerScore(player.name, score))
+        }
+        return retval;
+    }
 }
 
 fun readXml(path: String): Document {

@@ -197,3 +197,19 @@ a {
 .games-pickers .game-picker .card.picked.winner .pick-container .pick-text {
   color: rgb(33, 117, 16);
 }
+
+.scoreboard {
+  margin: 0 auto;
+  font-size: 1.2em;
+  width: 400px;
+}
+
+.scoreboard td:first-child, .scoreboard th:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.scoreboard td:last-child, .scoreboard th:last-child {
+  text-align: left;
+  padding-left: 10px;
+}
