@@ -2,40 +2,42 @@ import * as React from 'react';
 import './App.css';
 import { RootStore } from './stores/RootStore';
 import { observer } from 'mobx-react';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import { Picks } from './components/Picks';
 import * as Cookies from 'js-cookie';
 import { Scoreboard } from './components/Scoreboard';
+import { MyLink } from './components/MyLink';
+import { MyRoute } from './MyRoute';
+
 
 const rootStore = new RootStore();
 
+window.onhashchange = () => { console.info("hi"); };
+
 @observer class App extends React.Component {
     public render() {
+        const picksClasses = rootStore.routeStore.path.startsWith("/picks") ? "selected-link" : "";
+        const scoresClasses = rootStore.routeStore.path.startsWith("/scores") ? "selected-link" : "";
         return (
             <div className="App">
-                <Router>
+                <div className="title-bar"><h1>HH Football</h1></div>
+                <div className="nav-bar">
                     <div>
-                        <div className="title-bar"><h1>HH Football</h1></div>
-                        <div className="nav-bar">
-                            <div>
-                                <Link to="/picks">Picks</Link>
-                            </div>
-                            <div>
-                                <Link to="/scores">Scoreboard</Link>
-                            </div>
-                        </div>
-
-                        <Route path="/picks/:playerid?" component={renderPicks} />
-                        <Route path="/scores" component={renderScores} />
+                        <MyLink to="/picks" className={picksClasses} routeStore={rootStore.routeStore}>Picks</MyLink>
                     </div>
-                </Router>
+                    <div>
+                        <MyLink to="/scores" className={scoresClasses} routeStore={rootStore.routeStore}>Scoreboard</MyLink>
+                    </div>
+                </div>
+
+                <MyRoute path="/picks/:playerid?" component={renderPicks} />
+                <MyRoute path="/scores" component={renderScores} />
             </div>
         );
     }
 }
 
-function renderPicks({match}: {match: any}) {
-    const urlPlayerid = match.params.playerid;
+function renderPicks(params: any) {
+    const urlPlayerid = params.playerid;
     let playerid: string | undefined;
     if (urlPlayerid) {
         Cookies.set("playerid", urlPlayerid);
@@ -46,7 +48,7 @@ function renderPicks({match}: {match: any}) {
     return <Picks playerid={playerid} rootStore={rootStore} />;
 }
 
-function renderScores({match}: {match: any}) {
+function renderScores() {
     return <Scoreboard rootStore={rootStore} />;
 }
 

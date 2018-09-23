@@ -20,7 +20,7 @@ interface IProps {
                     <tr><th>Player</th><th>Score</th></tr>
                 </thead>
                 <tbody>
-                    {scoreboardStore.scoreboard.slice().sort((a, b) => a.score < b.score ? -1 : 1).map(renderPlayerScore)}
+                    {scoreboardStore.scoreboard.slice().sort((a, b) => b.score < a.score ? -1 : 1).map(renderPlayerScore)}
                 </tbody>
             </table>
         );

@@ -26,6 +26,10 @@
   margin-bottom: auto;
 }
 
+.nav-bar .selected-link {
+  text-decoration: underline;
+}
+
 a {
   color: black;
   text-decoration: none;

@@ -62,9 +62,9 @@ interface IProps {
         const homePickHandler = () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.home);
         return (
             <div key={game.id} className="game-picker">
-                {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, true, relevantPick.pick === game.visitor, visitorPickHandler)}
+                {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}
                 {this.renderGameDivider(game)}
-                {this.renderTeamCard(game.home, game.week, game.visitorScore < game.homeScore, false, relevantPick.pick === game.home, homePickHandler)}
+                {this.renderTeamCard(game.home, game.week, game.visitorScore < game.homeScore, game.finished, false, relevantPick.pick === game.home, homePickHandler)}
             </div>
         );
     }
@@ -94,7 +94,7 @@ interface IProps {
         }
     }
 
-    private renderTeamCard(team: string, week: number, winner: boolean, visitor: boolean, playerPick: boolean, clickHandler: () => void) {
+    private renderTeamCard(team: string, week: number, winner: boolean, finished: boolean, visitor: boolean, playerPick: boolean, clickHandler: () => void) {
         const classes = "card" + (visitor ? " visitor-card" : "");
         const img = <div><img src={img70s[team]} width="48" height="48" /></div>;
         const textClasses = "card-text" + (visitor ? " push-right" : "");
@@ -104,7 +104,7 @@ interface IProps {
             : "loading";
         const pickedClass = playerPick ? "picked" : "";
         const lockedIn = week < this.props.rootStore.currentWeekStore.currentWeek;
-        const winLoseClass = lockedIn
+        const winLoseClass = lockedIn && finished
             ? (winner ? "winner" : "loser")
             : "";
 
@@ -113,6 +113,14 @@ interface IProps {
             : "Pick";
         const interactive = !lockedIn;
         const maybeClickHandler = !lockedIn ? clickHandler : undefined;
+        const pickContainer = playerPick || !lockedIn
+            ? <div className="pick-container">
+                <div className={`pick-circle ${pickedClass}`}>
+                    {playerPick && <Icon icon={finished && lockedIn && !winner ? "cross" : "tick"}/>}
+                </div>
+                <div className={`pick-text ${pickedClass}`}>{pickText}</div>
+              </div>
+            : null;
         return (
             <Card interactive={interactive} className={`${classes} ${pickedClass} ${winLoseClass}`} onClick={maybeClickHandler}>
                 {img}
@@ -120,12 +128,7 @@ interface IProps {
                     <div>{locations[team]}</div>
                     <div>{names[team]} | {recordText}</div>
                 </div>
-                <div className="pick-container">
-                    <div className={`pick-circle ${pickedClass}`}>
-                        {playerPick && <Icon icon={lockedIn && !winner ? "cross" : "tick"}/>}
-                    </div>
-                    <div className={`pick-text ${pickedClass}`}>{pickText}</div>
-                </div>
+                {pickContainer}
             </Card>
         );
 

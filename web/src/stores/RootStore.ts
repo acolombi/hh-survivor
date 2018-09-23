@@ -3,6 +3,7 @@ import { PlayerStore } from "./PlayerStore";
 import { RecordsStore } from "./RecordsStore";
 import { CurrentWeekStore } from "./CurrentWeekStore";
 import { ScoreboardStore } from "./ScoreboardStore";
+import { RouteStore } from "./RouteStore";
 
 export class RootStore {
     public gamesStore: GamesStore;
@@ -10,6 +11,7 @@ export class RootStore {
     public recordsStore: RecordsStore;
     public currentWeekStore: CurrentWeekStore;
     public scoreboardStore: ScoreboardStore;
+    public routeStore: RouteStore;
 
     public constructor() {
         this.gamesStore = new GamesStore();
@@ -17,5 +19,6 @@ export class RootStore {
         this.recordsStore = new RecordsStore();
         this.currentWeekStore = new CurrentWeekStore();
         this.scoreboardStore = new ScoreboardStore();
+        this.routeStore = new RouteStore;
     }
 }
