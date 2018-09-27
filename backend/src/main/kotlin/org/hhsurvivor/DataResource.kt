@@ -10,6 +10,7 @@ import java.io.File
 import java.io.StringReader
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.ws.rs.*
@@ -48,7 +49,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
     @GET
     @Path("/currentWeek")
     fun getCurrentWeek(): Int {
-        val currentDate = LocalDate.now()
+        val currentDate = LocalDate.now(ZoneId.of("America/Los_Angeles"))
         for (weekNumber in 1..17) {
             val doc = readXml("data/week_$weekNumber.xml")
 

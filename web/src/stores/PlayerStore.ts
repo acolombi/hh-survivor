@@ -67,7 +67,7 @@ export class PlayerStore {
     @action.bound
     public pickGame(week: number, gameId: string, pick: string) {
         const id = this.id;
-        if (id == null) {
+        if (id == null || id === UNKNOWN_PLAYER) {
             return;
         }
         const foundIdx = this.picks.findIndex(p => p.gameId === gameId);
