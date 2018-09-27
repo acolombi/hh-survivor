@@ -31,6 +31,7 @@ window.onhashchange = () => { console.info("hi"); };
 
                 <MyRoute path="/picks/:playerid?" component={renderPicks} />
                 <MyRoute path="/scores" component={renderScores} />
+                <MyRoute path="/history/:historyId?" component={renderHistory} />
             </div>
         );
     }
@@ -46,6 +47,10 @@ function renderPicks(params: any) {
         playerid = Cookies.get("playerid");
     }
     return <Picks playerid={playerid} rootStore={rootStore} />;
+}
+
+function renderHistory(params: any) {
+    return <Picks historyId={params.historyId} rootStore={rootStore} />;
 }
 
 function renderScores() {

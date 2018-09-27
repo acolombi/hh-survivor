@@ -3,6 +3,7 @@ import { observable, flow } from "mobx";
 
 export interface IPlayerScore {
     playerName: string;
+    historyId: string;
     score: number;
 }
 

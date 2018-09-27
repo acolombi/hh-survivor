@@ -11,6 +11,7 @@ import java.io.StringReader
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.xml.parsers.DocumentBuilderFactory
@@ -84,7 +85,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
                 log.error("couldn't read player file $playerId.json", e)
             }
         }
-        return Player("🐌", "Unknown", listOf())
+        return Player("🐌", "🐌", "Unknown", listOf())
     }
 
     @Timed
@@ -114,7 +115,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
                 if (!oldPlayer.picks.contains(Pick(body.gameId, body.week, body.pick))) {
                     newPicks.add(Pick(body.gameId, body.week, body.pick))
                 }
-                val newPlayer = Player(oldPlayer.id, oldPlayer.name, newPicks)
+                val newPlayer = Player(oldPlayer.id, oldPlayer.historyId, oldPlayer.name, newPicks)
                 objectMapper.writeValue(playerFile, newPlayer)
             } catch (e: Exception) {
                 log.error("couldn't read or write player file ${body.playerId}.json", e)
@@ -156,9 +157,26 @@ class DataResource(private val objectMapper: ObjectMapper) {
                 }
             }
 
-            retval.add(PlayerScore(player.name, score))
+            retval.add(PlayerScore(player.name, player.historyId, score))
         }
         return retval;
+    }
+
+    @Timed
+    @Path("/history")
+    @GET
+    fun getHistory(@QueryParam("id") historyId: String): Player {
+        for (file in File("data/players/").walk()) {
+            if (!file.isFile || file.extension != "json") {
+                continue;
+            }
+            val player = objectMapper.readValue(file, Player::class.java)
+            if (player.historyId == historyId) {
+                val picks = player.picks.filter { pick -> pick.week < this.getCurrentWeek() }
+                return Player("🐌", player.historyId, player.name, picks)
+            }
+        }
+        return Player("🐌", "🐌", "Unknown", listOf())
     }
 }
 

@@ -17,6 +17,7 @@ data class Pick(val gameId: String,
                 val pick: String)
 
 data class Player(val id: String,
+                  val historyId: String,
                   val name: String,
                   val picks: List<Pick>)
 
@@ -29,4 +30,5 @@ data class PlayerPick(val pickNumber: Int,
                       val pick: String)
 
 data class PlayerScore(val playerName: String,
+                       val historyId: String,
                        val score: Int)

@@ -8,6 +8,7 @@ import { locations, names, img70s } from '../Utils';
 
 interface IProps {
     playerid?: string;
+    historyId?: string;
     rootStore: RootStore;
 }
 
@@ -20,7 +21,11 @@ interface IProps {
     }
 
     public componentDidMount() {
-        this.props.rootStore.playerStore.fetchPlayer(this.props.playerid);
+        if (this.props.historyId == null) {
+            this.props.rootStore.playerStore.fetchPlayer(this.props.playerid);
+        } else {
+            this.props.rootStore.playerStore.fetchHistory(this.props.historyId);
+        }
     }
 
     public render() {
@@ -31,7 +36,7 @@ interface IProps {
         return (
             <div>
                 <h2>
-                    {this.props.rootStore.playerStore.name}'s Picks
+                    {this.props.rootStore.playerStore.name}'s {this.props.rootStore.playerStore.isHistory && "Historical"} Picks
                 </h2>
                 {this.renderWeeks()}
                 {this.renderGamesPicker()}
@@ -58,8 +63,12 @@ interface IProps {
 
     private renderGame(game: IGame) {
         const relevantPick = this.props.rootStore.playerStore.picks.find(p => p.gameId === game.id) || {gameId: game.id, pick: ""};
-        const visitorPickHandler = () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.visitor);
-        const homePickHandler = () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.home);
+        const visitorPickHandler = !this.props.rootStore.playerStore.isHistory
+            ? () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.visitor)
+            : undefined;
+        const homePickHandler = !this.props.rootStore.playerStore.isHistory
+            ? () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.home)
+            : undefined;
         return (
             <div key={game.id} className="game-picker">
                 {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}
@@ -94,7 +103,7 @@ interface IProps {
         }
     }
 
-    private renderTeamCard(team: string, week: number, winner: boolean, finished: boolean, visitor: boolean, playerPick: boolean, clickHandler: () => void) {
+    private renderTeamCard(team: string, week: number, winner: boolean, finished: boolean, visitor: boolean, playerPick: boolean, clickHandler?: () => void) {
         const classes = "card" + (visitor ? " visitor-card" : "");
         const img = <div><img src={img70s[team]} width="48" height="48" /></div>;
         const textClasses = "card-text" + (visitor ? " push-right" : "");
@@ -111,9 +120,9 @@ interface IProps {
         const pickText = playerPick
             ? (winLoseClass ? (winner ? "Winner" : "Loser") : "Picked")
             : "Pick";
-        const interactive = !lockedIn;
+        const interactive = !lockedIn && clickHandler != null;
         const maybeClickHandler = !lockedIn ? clickHandler : undefined;
-        const pickContainer = playerPick || !lockedIn
+        const pickContainer = playerPick || (!lockedIn && clickHandler)
             ? <div className="pick-container">
                 <div className={`pick-circle ${pickedClass}`}>
                     {playerPick && <Icon icon={finished && lockedIn && !winner ? "cross" : "tick"}/>}

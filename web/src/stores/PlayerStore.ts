@@ -16,10 +16,11 @@ export class PlayerStore {
     @observable public loadingPlayer = true;
     @observable public loadingSelectedWeek = true;
     @observable public selectedWeek = 1;
+    @observable public isHistory = false;
     private pickNumber = 0;
 
     constructor() {
-        this.fetchSelectedWeek();
+        return;
     }
 
     @computed public get loading() {
@@ -27,8 +28,23 @@ export class PlayerStore {
     }
 
     public fetchPlayer = flow(function* fetchPlayer(this: PlayerStore, playerid: string | undefined) {
+        this.fetchSelectedWeek();
+
+        this.isHistory = false;
         this.loadingPlayer = true;
         const result = yield axios.get(`/api/player?id=${playerid}`);
+        this.id = result.data.id;
+        this.name = result.data.name;
+        this.picks = result.data.picks;
+        this.loadingPlayer = false;
+    });
+
+    public fetchHistory = flow(function* fetchHistory(this: PlayerStore, historyId: string | undefined) {
+        this.fetchSelectedWeek();
+
+        this.isHistory = true;
+        this.loadingPlayer = true;
+        const result = yield axios.get(`/api/history?id=${historyId}`);
         this.id = result.data.id;
         this.name = result.data.name;
         this.picks = result.data.picks;

@@ -1,5 +1,6 @@
 package org.hhsurvivor
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.spinscale.dropwizard.jobs.JobsBundle
 import io.dropwizard.Application
@@ -19,6 +20,8 @@ class HHSurvivorApplication(): Application<HHSurvivorConfiguration>() {
         val downloadGamesJob = DownloadGamesJob()
         bootstrap.addBundle(JobsBundle(downloadGamesJob))
         bootstrap.objectMapper.registerModule(KotlinModule())
+        bootstrap.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
     }
 
     override fun run(configuration: HHSurvivorConfiguration, environment: Environment) {
