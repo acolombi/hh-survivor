@@ -10,8 +10,9 @@ import { MyRoute } from './MyRoute';
 
 
 const rootStore = new RootStore();
-
-window.onhashchange = () => { console.info("hi"); };
+if (window.location.pathname === "/") {
+    rootStore.routeStore.push("/picks");
+}
 
 @observer class App extends React.Component {
     public render() {
