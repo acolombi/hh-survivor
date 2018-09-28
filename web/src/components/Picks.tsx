@@ -32,6 +32,9 @@ interface IProps {
         if (this.props.rootStore.playerStore.loading || !this.props.rootStore.gamesStore.weeks) {
             return <div>Loading</div>;
         }
+        if (this.props.playerid == null) {
+            return <div>Doesn't look like you're logged in. Maybe try clicking the invite link again to save a new login cookie.</div>;
+        }
 
         return (
             <div>

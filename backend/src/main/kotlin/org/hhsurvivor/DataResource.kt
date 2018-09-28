@@ -140,13 +140,15 @@ class DataResource(private val objectMapper: ObjectMapper) {
             val weekLosses = IntArray(17)
             for (pick in player.picks) {
                 val game = Data.games[pick.gameId]
-                if (game == null || !game.finished || game.homeScore == null || game.visitorScore == null) {
+                if (game == null) {
                     continue
                 }
-                if (game.homeScore > game.visitorScore && pick.pick == game.home
-                    || game.homeScore < game.visitorScore && pick.pick == game.visitor) {
+                if (game.finished && game.visitorScore != null && game.homeScore != null
+                    && (game.homeScore > game.visitorScore && pick.pick == game.home
+                        || game.homeScore < game.visitorScore && pick.pick == game.visitor)) {
                     weekWins[pick.week-1] += 1;
                 } else {
+                    // losses include games they've picked and haven't finished yet
                     weekLosses[pick.week-1] += 1;
                 }
             }
