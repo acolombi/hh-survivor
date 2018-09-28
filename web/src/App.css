@@ -72,7 +72,27 @@ a {
 
 .games-pickers .game-picker {
   display: flex;
-  margin: 10px 0;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 5px;
+}
+
+@media (max-width: 600px) {
+  .games-pickers .game-picker {
+    margin-top: 20px;
+  }
+}
+
+
+.games-pickers .game-picker .narrow-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.games-pickers .game-picker .game-picker-row {
+  display: flex;
 }
 
 .games-pickers .game-picker .picker-divider {
@@ -81,6 +101,13 @@ a {
   flex-direction: column;
   text-align: center;
   width: 170px;
+  margin: 0 3px;
+}
+
+@media (max-width: 600px) {
+  .games-pickers .game-picker .picker-divider {
+    width: 25px;
+  }
 }
 
 .games-pickers .game-picker .picker-divider .winner {
@@ -97,6 +124,13 @@ a {
   display: flex;
   width: 350px;
 }
+
+@media (max-width: 600px) {
+  .games-pickers .game-picker .card.bp3-card {
+    padding: 5px;
+  }
+}
+
 
 .games-pickers .game-picker .card.picked {
   background-color: rgb(229, 241, 255);
@@ -216,4 +250,8 @@ a {
 .scoreboard td:last-child, .scoreboard th:last-child {
   text-align: left;
   padding-left: 10px;
+}
+
+.bold-text {
+  font-weight: bold;
 }

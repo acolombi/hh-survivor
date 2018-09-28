@@ -69,16 +69,29 @@ interface IProps {
         const homePickHandler = !this.props.rootStore.playerStore.isHistory
             ? () => this.props.rootStore.playerStore.pickGame(game.week, game.id, game.home)
             : undefined;
+        const narrowHeader = this.props.rootStore.windowStore.isNarrow
+            ? <div className="narrow-header">
+                <div className="bold-text">{locations[game.visitor]} @ {locations[game.home]}</div>
+                <div>{game.datetime}</div>
+              </div>
+            : null;
         return (
-            <div key={game.id} className="game-picker">
-                {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}
-                {this.renderGameDivider(game)}
-                {this.renderTeamCard(game.home, game.week, game.visitorScore < game.homeScore, game.finished, false, relevantPick.pick === game.home, homePickHandler)}
+            <div className="game-picker">
+                {narrowHeader}
+                <div key={game.id} className="game-picker-row">
+                    {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}
+                    {this.renderGameDivider(game)}
+                    {this.renderTeamCard(game.home, game.week, game.visitorScore < game.homeScore, game.finished, false, relevantPick.pick === game.home, homePickHandler)}
+                </div>
             </div>
         );
     }
 
     private renderGameDivider(game: IGame) {
+        if (this.props.rootStore.windowStore.isNarrow) {
+            return <div className="picker-divider">@</div>;
+        }
+
         if (game.finished) {
             const scoreLine = (
                 <div>
@@ -104,6 +117,7 @@ interface IProps {
     }
 
     private renderTeamCard(team: string, week: number, winner: boolean, finished: boolean, visitor: boolean, playerPick: boolean, clickHandler?: () => void) {
+        const isNarrow = this.props.rootStore.windowStore.isNarrow;
         const classes = "card" + (visitor ? " visitor-card" : "");
         const img = <div><img src={img70s[team]} width="48" height="48" /></div>;
         const textClasses = "card-text" + (visitor ? " push-right" : "");
@@ -122,7 +136,7 @@ interface IProps {
             : "Pick";
         const interactive = !lockedIn && clickHandler != null;
         const maybeClickHandler = !lockedIn ? clickHandler : undefined;
-        const pickContainer = playerPick || (!lockedIn && clickHandler)
+        const pickContainer = !isNarrow && (playerPick || (!lockedIn && clickHandler))
             ? <div className="pick-container">
                 <div className={`pick-circle ${pickedClass}`}>
                     {playerPick && <Icon icon={finished && lockedIn && !winner ? "cross" : "tick"}/>}
@@ -134,8 +148,10 @@ interface IProps {
             <Card interactive={interactive} className={`${classes} ${pickedClass} ${winLoseClass}`} onClick={maybeClickHandler}>
                 {img}
                 <div className={textClasses}>
-                    <div>{locations[team]}</div>
-                    <div>{names[team]} | {recordText}</div>
+                    {!isNarrow && <div className="bold-text">{locations[team]}</div>}
+                    {!isNarrow && <div>{names[team]} | {recordText}</div>}
+                    {isNarrow && <div className="bold-text">{names[team]}</div>}
+                    {isNarrow && <div>{recordText}</div>}
                 </div>
                 {pickContainer}
             </Card>
