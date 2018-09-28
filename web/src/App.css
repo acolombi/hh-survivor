@@ -44,6 +44,7 @@ a {
 .badge {
   background-color: #EBF1F5;
   width: 55px;
+  min-width: 55px;
   height: 60px;
   margin-right: 2px;
   font-size: 14px;
@@ -126,6 +127,7 @@ a {
   max-width: 350px;
   flex-grow: 1;
   flex-basis: 350px;
+  align-items: center;
 }
 
 @media (max-width: 600px) {
@@ -183,6 +185,12 @@ a {
   margin-right: auto;
 }
 
+@media (max-width: 374px) {
+  .games-pickers .game-picker .card .pick-container {
+    display: none;
+  }
+}
+
 .games-pickers .game-picker .card .pick-container {
   width: 50px;
 }
@@ -196,6 +204,13 @@ a {
   border-color: #48AFF0;
   width: 32px;
   height: 32px;
+}
+
+@media (max-width: 600px) {
+  .games-pickers .game-picker .card .pick-container .pick-circle {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .games-pickers .game-picker .card .pick-container .pick-circle.picked {
@@ -231,6 +246,12 @@ a {
   text-align: center;
 }
 
+@media (max-width: 600px) {
+  .games-pickers .game-picker .card .pick-container .pick-text {
+    font-size: 12px;
+  }
+}
+
 .games-pickers .game-picker .card.picked.loser .pick-container .pick-text {
   color: rgb(180, 53, 53);
 }
@@ -243,6 +264,10 @@ a {
   margin: 0 auto;
   font-size: 1.2em;
   width: 400px;
+}
+
+.scoreboard .scoreboard-column {
+  width: 50%;
 }
 
 .scoreboard td:first-child, .scoreboard th:first-child {

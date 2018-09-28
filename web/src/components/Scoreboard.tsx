@@ -22,6 +22,8 @@ interface IProps {
         }
         return (
             <table className="scoreboard">
+                <col className="scoreboard-column" />
+                <col className="scoreboard-column" />
                 <thead>
                     <tr><th>Player</th><th>Score</th></tr>
                 </thead>

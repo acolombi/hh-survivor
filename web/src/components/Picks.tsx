@@ -136,10 +136,10 @@ interface IProps {
             : "Pick";
         const interactive = !lockedIn && clickHandler != null;
         const maybeClickHandler = !lockedIn ? clickHandler : undefined;
-        const pickContainer = !isNarrow && (playerPick || (!lockedIn && clickHandler))
+        const pickContainer = playerPick || (!lockedIn && clickHandler)
             ? <div className="pick-container">
                 <div className={`pick-circle ${pickedClass}`}>
-                    {playerPick && <Icon icon={finished && lockedIn && !winner ? "cross" : "tick"}/>}
+                    {playerPick && <Icon iconSize={isNarrow ? 12 : 16} icon={finished && lockedIn && !winner ? "cross" : "tick"}/>}
                 </div>
                 <div className={`pick-text ${pickedClass}`}>{pickText}</div>
               </div>
