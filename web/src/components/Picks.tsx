@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { IWeek, IGame } from '../stores/GamesStore';
 import { Card, Icon } from '@blueprintjs/core';
 import { locations, names, img70s } from '../Utils';
+import { UNKNOWN_PLAYER } from '../stores/PlayerStore';
 
 
 interface IProps {
@@ -32,7 +33,8 @@ interface IProps {
         if (this.props.rootStore.playerStore.loading || !this.props.rootStore.gamesStore.weeks) {
             return <div>Loading</div>;
         }
-        if ((this.props.playerid == null || this.props.playerid === "🐌") && this.props.historyId == null) {
+        if ((this.props.rootStore.playerStore.id == null || this.props.rootStore.playerStore.id === UNKNOWN_PLAYER)
+            && this.props.historyId == null) {
             return <div>Doesn't look like you're logged in. Maybe try clicking the invite link again to save a new login cookie.</div>;
         }
 
@@ -79,7 +81,7 @@ interface IProps {
               </div>
             : null;
         return (
-            <div className="game-picker">
+            <div key={game.id} className="game-picker">
                 {narrowHeader}
                 <div key={game.id} className="game-picker-row">
                     {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}

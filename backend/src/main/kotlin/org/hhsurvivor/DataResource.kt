@@ -27,6 +27,8 @@ class DataResource(private val objectMapper: ObjectMapper) {
     private data class PickNumberKey(val playerId: String, val gameId: String)
     private val pickNumberMap = HashMap<PickNumberKey, Int>()
 
+    private val PLAYER_UNKNOWN = "UNKNOWN";
+
     @Timed
     @GET
     @Path("/weeks")
@@ -86,7 +88,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
                 log.error("couldn't read player file $playerId.json", e)
             }
         }
-        return Player("🐌", "🐌", "Unknown", listOf())
+        return Player(PLAYER_UNKNOWN, PLAYER_UNKNOWN, "Unknown", listOf())
     }
 
     @Timed
@@ -176,10 +178,10 @@ class DataResource(private val objectMapper: ObjectMapper) {
             val player = objectMapper.readValue(file, Player::class.java)
             if (player.historyId == historyId) {
                 val picks = player.picks.filter { pick -> pick.week < this.getCurrentWeek() }
-                return Player("🐌", player.historyId, player.name, picks)
+                return Player(PLAYER_UNKNOWN, player.historyId, player.name, picks)
             }
         }
-        return Player("🐌", "🐌", "Unknown", listOf())
+        return Player(PLAYER_UNKNOWN, PLAYER_UNKNOWN, "Unknown", listOf())
     }
 }
 

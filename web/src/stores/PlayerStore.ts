@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { observable, flow, action, computed } from 'mobx';
 
-export const UNKNOWN_PLAYER = "🐌";
+export const UNKNOWN_PLAYER = "UNKNOWN";
 
 export interface IPick {
     gameId: string;
