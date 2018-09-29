@@ -77,7 +77,7 @@ interface IProps {
         const narrowHeader = this.props.rootStore.windowStore.isNarrow
             ? <div className="narrow-header">
                 <div className="bold-text">{locations[game.visitor]} @ {locations[game.home]}</div>
-                <div>{game.datetime}</div>
+                <div>{game.finished ? scoreLine(game) : game.datetime}</div>
               </div>
             : null;
         return (
@@ -98,16 +98,9 @@ interface IProps {
         }
 
         if (game.finished) {
-            const scoreLine = (
-                <div>
-                    <span className={game.visitorScore > game.homeScore ? "winner" : ""}>{game.visitorScore} </span>
-                    -
-                    <span className={game.visitorScore < game.homeScore ? "winner" : ""}> {game.homeScore}</span>
-                </div>
-            );
             return (
                 <div className="picker-divider">
-                    {scoreLine}
+                    {scoreLine(game)}
                     <div className="final-text">Final</div>
                 </div>
             );
@@ -200,4 +193,14 @@ interface IProps {
     private handleSelectWeek(weekNumber: number) {
         this.props.rootStore.playerStore.setWeek(weekNumber);
     }
+}
+
+function scoreLine(game: IGame) {
+    return (
+        <div>
+            <span className={game.visitorScore > game.homeScore ? "winner" : ""}>{game.visitorScore} </span>
+            -
+            <span className={game.visitorScore < game.homeScore ? "winner" : ""}> {game.homeScore}</span>
+        </div>
+    );
 }

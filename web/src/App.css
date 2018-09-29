@@ -112,7 +112,7 @@ a {
   }
 }
 
-.games-pickers .game-picker .picker-divider .winner {
+.games-pickers .game-picker .picker-divider .winner, .games-pickers .game-picker .narrow-header .winner {
   font-weight: 600;
 }
 
