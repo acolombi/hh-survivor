@@ -25,8 +25,6 @@ import javax.xml.xpath.XPathFactory
 class DataResource(private val objectMapper: ObjectMapper) {
 
     private val log = LoggerFactory.getLogger(DataResource::class.java)
-    private data class PickNumberKey(val playerId: String, val gameId: String)
-    private val pickNumberMap = HashMap<PickNumberKey, Int>()
 
     private val PLAYER_UNKNOWN = "UNKNOWN";
 
@@ -103,10 +101,6 @@ class DataResource(private val objectMapper: ObjectMapper) {
     @Path("/pick")
     @POST
     fun pickGame(body: PlayerPick) {
-        val lastRelatedPick = pickNumberMap[PickNumberKey(body.playerId, body.gameId)]
-        if (lastRelatedPick != null && lastRelatedPick > body.pickNumber) {
-            return;
-        }
         val game = Data.games[body.gameId]
         if (game != null && game.datetime < ZonedDateTime.now()) {
             return;
@@ -125,8 +119,6 @@ class DataResource(private val objectMapper: ObjectMapper) {
                 log.error("couldn't read or write player file ${body.playerId}.json", e)
             }
         }
-
-        pickNumberMap[PickNumberKey(body.playerId, body.gameId)] = body.pickNumber
     }
 
     @Timed
