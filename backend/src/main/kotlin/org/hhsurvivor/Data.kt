@@ -1,10 +1,11 @@
 package org.hhsurvivor
 
 import org.slf4j.LoggerFactory
-import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -43,10 +44,11 @@ object Data {
                 val homeScore = stringToInt(res.item(i).attributes.getNamedItem("hs").textContent)
                 val visitor = res.item(i).attributes.getNamedItem("v").textContent
                 val visitorScore = stringToInt(res.item(i).attributes.getNamedItem("vs").textContent)
-                val time = res.item(i).attributes.getNamedItem("d").textContent + " " +
+                val dayTime = res.item(i).attributes.getNamedItem("d").textContent + " " +
                         estToPst(res.item(i).attributes.getNamedItem("t").textContent)
                 val finished = res.item(i).attributes.getNamedItem("q").textContent.startsWith("F")
-                games[eid] = Game(eid, weekNumber, home, homeScore, visitor, visitorScore, time, finished)
+                val datetime = eidToDateTime(eid)
+                games[eid] = Game(eid, weekNumber, home, homeScore, visitor, visitorScore, dayTime, datetime, finished)
             }
         }
     }
@@ -84,4 +86,10 @@ private fun estToPst(estTime: String): String {
 
 private fun stringToInt(str: String?): Int? {
     return if (str != "") str?.toInt() else null;
+}
+
+private fun eidToDateTime(eid: String): ZonedDateTime {
+    val gameDateStr = eid.substring(0, eid.length - 2)
+    val localDate = LocalDate.parse(gameDateStr, DateTimeFormatter.ofPattern("yyyyMMdd"))
+    return ZonedDateTime.of(localDate, LocalTime.MIDNIGHT, ZoneId.of("America/Los_Angeles"))
 }

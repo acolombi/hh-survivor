@@ -11,6 +11,7 @@ import java.io.StringReader
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.ws.rs.*
@@ -61,7 +62,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
             val res = xPathEng.evaluate(xPath, doc, XPathConstants.NODESET) as NodeList
 
             try {
-                val eid = res.item(0).attributes.getNamedItem("eid").textContent
+                val eid = res.item(res.length-1).attributes.getNamedItem("eid").textContent
                 val gameDateStr = eid.substring(0, eid.length - 2)
                 val gameDate = LocalDate.parse(gameDateStr, DateTimeFormatter.ofPattern("yyyyMMdd"))
                 if (gameDate > currentDate) {
@@ -107,7 +108,7 @@ class DataResource(private val objectMapper: ObjectMapper) {
             return;
         }
         val game = Data.games[body.gameId]
-        if (game != null && game.week < getCurrentWeek()) {
+        if (game != null && game.datetime < ZonedDateTime.now()) {
             return;
         }
         val playerFile = File("data/players/${body.playerId}.json")
@@ -177,7 +178,10 @@ class DataResource(private val objectMapper: ObjectMapper) {
             }
             val player = objectMapper.readValue(file, Player::class.java)
             if (player.historyId == historyId) {
-                val picks = player.picks.filter { pick -> pick.week < this.getCurrentWeek() }
+                val picks = player.picks.filter { pick ->
+                    val game = Data.games[pick.gameId]
+                    return@filter game != null && game.datetime < ZonedDateTime.now()
+                }
                 return Player(PLAYER_UNKNOWN, player.historyId, player.name, picks)
             }
         }

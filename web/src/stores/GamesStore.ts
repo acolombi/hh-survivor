@@ -14,7 +14,8 @@ export interface IGame {
     homeScore: number;
     visitor: string;
     visitorScore: number;
-    datetime: string;
+    dayTimeString: string;
+    datetime: number;
     finished: boolean;
 }
 

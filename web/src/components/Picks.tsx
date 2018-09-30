@@ -5,6 +5,7 @@ import { IWeek, IGame } from '../stores/GamesStore';
 import { Card, Icon } from '@blueprintjs/core';
 import { locations, names, img70s } from '../Utils';
 import { UNKNOWN_PLAYER } from '../stores/PlayerStore';
+import * as moment from 'moment';
 
 
 interface IProps {
@@ -52,16 +53,22 @@ interface IProps {
     private renderWeeks() {
         return (
             <div className="picks-week-badges">
-                {this.props.rootStore.gamesStore.weeks.map(this.renderWeekBadge)}
+                {this.props.rootStore.gamesStore.weeks
+                    .filter(w => w.number <= this.props.rootStore.currentWeekStore.currentWeek || !this.props.rootStore.playerStore.isHistory)
+                    .map(this.renderWeekBadge)}
             </div>
         );
     }
 
     private renderGamesPicker() {
         const games = this.props.rootStore.gamesStore.weeks[this.props.rootStore.playerStore.selectedWeek-1].games;
+        const gamePanels = games.map((game) => this.renderGame(game)).filter(gp => gp != null);
+        const content = gamePanels.length > 0
+            ? gamePanels
+            : <div>No picks visible for this week. Check back later!</div>;
         return (
             <div className="games-pickers">
-                {games.map((game) => this.renderGame(game))}
+                {content}
             </div>
         );
     }
@@ -77,19 +84,24 @@ interface IProps {
         const narrowHeader = this.props.rootStore.windowStore.isNarrow
             ? <div className="narrow-header">
                 <div className="bold-text">{locations[game.visitor]} @ {locations[game.home]}</div>
-                <div>{game.finished ? scoreLine(game) : game.datetime}</div>
+                <div>{game.finished ? scoreLine(game) : game.dayTimeString}</div>
               </div>
             : null;
-        return (
-            <div key={game.id} className="game-picker">
-                {narrowHeader}
-                <div key={game.id} className="game-picker-row">
-                    {this.renderTeamCard(game.visitor, game.week, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}
-                    {this.renderGameDivider(game)}
-                    {this.renderTeamCard(game.home, game.week, game.visitorScore < game.homeScore, game.finished, false, relevantPick.pick === game.home, homePickHandler)}
+        const gameDatetime = moment(game.datetime * 1000);
+        if (this.props.rootStore.playerStore.isHistory && relevantPick.pick !== game.visitor && relevantPick.pick !== game.home) {
+            return null;
+        } else {
+            return (
+                <div key={game.id} className="game-picker">
+                    {narrowHeader}
+                    <div key={game.id} className="game-picker-row">
+                        {this.renderTeamCard(game.visitor, gameDatetime, game.visitorScore > game.homeScore, game.finished, true, relevantPick.pick === game.visitor, visitorPickHandler)}
+                        {this.renderGameDivider(game)}
+                        {this.renderTeamCard(game.home, gameDatetime, game.visitorScore < game.homeScore, game.finished, false, relevantPick.pick === game.home, homePickHandler)}
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
     }
 
     private renderGameDivider(game: IGame) {
@@ -108,13 +120,13 @@ interface IProps {
             return (
                 <div className="picker-divider">
                     <div>@</div>
-                    <div>{game.datetime}</div>
+                    <div>{game.dayTimeString}</div>
                 </div>
             );
         }
     }
 
-    private renderTeamCard(team: string, week: number, winner: boolean, finished: boolean, visitor: boolean, playerPick: boolean, clickHandler?: () => void) {
+    private renderTeamCard(team: string, gameDatetime: moment.Moment, winner: boolean, finished: boolean, visitor: boolean, playerPick: boolean, clickHandler?: () => void) {
         const isNarrow = this.props.rootStore.windowStore.isNarrow;
         const classes = "card" + (visitor ? " visitor-card" : "");
         const img = <div><img src={img70s[team]} width="48" height="48" /></div>;
@@ -124,7 +136,7 @@ interface IProps {
             ? `${record.wins}-${record.losses}` + (record.ties ? `-${record.ties}` : "")
             : "loading";
         const pickedClass = playerPick ? "picked" : "";
-        const lockedIn = week < this.props.rootStore.currentWeekStore.currentWeek;
+        const lockedIn = moment() >= gameDatetime;
         const winLoseClass = lockedIn && finished
             ? (winner ? "winner" : "loser")
             : "";

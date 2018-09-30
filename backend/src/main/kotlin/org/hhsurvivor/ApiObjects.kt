@@ -1,12 +1,15 @@
 package org.hhsurvivor
 
+import java.time.ZonedDateTime
+
 data class Game(val id: String,
                 val week: Int,
                 val home: String,
                 val homeScore: Int?,
                 val visitor: String,
                 val visitorScore: Int?,
-                val datetime: String,
+                val dayTimeString: String,
+                val datetime: ZonedDateTime,
                 val finished: Boolean)
 
 data class Week(val number: Int,
