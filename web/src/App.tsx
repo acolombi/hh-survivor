@@ -17,7 +17,8 @@ if (window.location.pathname === "/") {
 @observer class App extends React.Component {
     public render() {
         const picksClasses = rootStore.routeStore.path.startsWith("/picks") ? "selected-link" : "";
-        const scoresClasses = rootStore.routeStore.path.startsWith("/scores") ? "selected-link" : "";
+        const scoresClasses = rootStore.routeStore.path.startsWith("/scores") || rootStore.routeStore.path.startsWith("/history")
+            ? "selected-link" : "";
         return (
             <div className="App">
                 <div className="title-bar"><h1>HH Football</h1></div>
