@@ -43,7 +43,7 @@ function renderPicks(params: any) {
     const urlPlayerid = params.playerid;
     let playerid: string | undefined;
     if (urlPlayerid) {
-        Cookies.set("playerid", urlPlayerid);
+        Cookies.set("playerid", urlPlayerid, { expires: 365 });
         playerid = urlPlayerid;
     } else {
         playerid = Cookies.get("playerid");

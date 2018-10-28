@@ -133,9 +133,10 @@ class DataResource(private val objectMapper: ObjectMapper) {
             val player = objectMapper.readValue(file, Player::class.java)
             val weekWins = IntArray(17)
             val weekLosses = IntArray(17)
+            val currentWeek = getCurrentWeek()
             for (pick in player.picks) {
                 val game = Data.games[pick.gameId]
-                if (game == null) {
+                if (game == null || game.week >= currentWeek) {
                     continue
                 }
                 if (game.finished && game.visitorScore != null && game.homeScore != null

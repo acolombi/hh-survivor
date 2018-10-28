@@ -44,10 +44,11 @@ object Data {
                 val homeScore = stringToInt(res.item(i).attributes.getNamedItem("hs").textContent)
                 val visitor = res.item(i).attributes.getNamedItem("v").textContent
                 val visitorScore = stringToInt(res.item(i).attributes.getNamedItem("vs").textContent)
+                val estTime = timeStringToEst(eid, res.item(i).attributes.getNamedItem("t").textContent)
                 val dayTime = res.item(i).attributes.getNamedItem("d").textContent + " " +
-                        estToPst(res.item(i).attributes.getNamedItem("t").textContent)
+                        estToPstString(estTime)
                 val finished = res.item(i).attributes.getNamedItem("q").textContent.startsWith("F")
-                val datetime = eidToDateTime(eid)
+                val datetime = gameDateTime(eid, estTime);
                 games[eid] = Game(eid, weekNumber, home, homeScore, visitor, visitorScore, dayTime, datetime, finished)
             }
         }
@@ -78,18 +79,24 @@ object Data {
     }
 }
 
-private fun estToPst(estTime: String): String {
+private fun timeStringToEst(eid: String, timeString: String): LocalTime {
     val parseFormat = DateTimeFormatter.ofPattern("h:mm a")
+    val amGames = setOf("2018102800", "2018102100")
+    val ampm = if (amGames.contains(eid)) "AM" else "PM"
+    return LocalTime.parse("$timeString $ampm", parseFormat)
+}
+
+private fun estToPstString(estTime: LocalTime): String {
     val printFormat = DateTimeFormatter.ofPattern("h:mm")
-    return LocalTime.parse("$estTime AM", parseFormat).minusHours(3).format(printFormat);
+    return estTime.minusHours(3).format(printFormat)
 }
 
 private fun stringToInt(str: String?): Int? {
     return if (str != "") str?.toInt() else null;
 }
 
-private fun eidToDateTime(eid: String): ZonedDateTime {
+private fun gameDateTime(eid: String, time: LocalTime): ZonedDateTime {
     val gameDateStr = eid.substring(0, eid.length - 2)
     val localDate = LocalDate.parse(gameDateStr, DateTimeFormatter.ofPattern("yyyyMMdd"))
-    return ZonedDateTime.of(localDate, LocalTime.MIDNIGHT, ZoneId.of("America/Los_Angeles"))
+    return ZonedDateTime.of(localDate, time, ZoneId.of("America/New_York"))
 }
